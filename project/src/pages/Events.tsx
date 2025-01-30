@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Calendar, MapPin, Clock, Plus, Search } from "lucide-react";
 import { format } from "date-fns";
 import axios from "axios";
@@ -6,9 +6,13 @@ import { useNavigate } from "react-router-dom";
 
 export function Events() {
   const navigate = useNavigate();
-  const handleSubmit = async () => {
-    navigate("/events-create");
-  };
+  const [data, setData] = useState([]);
+  useEffect(() => {
+    const response = axios.get("/events");
+    response.then((res) => setData(res.data));
+  }, []);
+
+  console.log(data.map((event: any) => event));
   return (
     <div className="space-y-8">
       <header className="flex justify-between items-center">
@@ -18,7 +22,7 @@ export function Events() {
         </div>
         <button
           className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
-          onClick={handleSubmit}
+          onClick={() => navigate("/events-create")}
         >
           <Plus className="h-5 w-5 mr-2" />
           Create Event
@@ -63,6 +67,16 @@ export function Events() {
           description="24-hour coding challenge with amazing prizes"
           attendees={200}
         />
+        {data.map((event: any) => (
+          <EventCard
+            key={event._id}
+            title={event.title}
+            date={new Date(event.startDate)}
+            location={event.location}
+            description={event.description}
+            attendees={event.attending}
+          />
+        ))}
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import React from "react";
+// import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Navigation } from "./components/Navigation";
 import { Home } from "./pages/Home";
@@ -6,7 +6,7 @@ import { Groups } from "./pages/Groups";
 import { Events } from "./pages/Events";
 import axios from "axios";
 import { Profile } from "./pages/Profile";
-import { CreateEvents } from "./pages/CreateEvent";
+import { CreateEvents } from "./pages/CreateEvents";
 
 axios.defaults.baseURL = `http://localhost:8000/api`;
 

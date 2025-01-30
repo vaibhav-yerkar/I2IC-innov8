@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
+import axios from "axios";
 
-const CreateEvent = () => {
+const CreateEvents = () => {
   const [tableData1, setTableData1] = useState([
     { description: "", price: "", reference: "" },
   ]);
@@ -23,6 +25,82 @@ const CreateEvent = () => {
     ]);
   };
 
+  const handleSubmit = async () => {
+    const eventData = {
+      title:
+        document.querySelector<HTMLInputElement>("#floating_first_title")
+          ?.value || "",
+      startDate:
+        document.querySelector<HTMLInputElement>("#floating_date")?.value || "",
+      startTime:
+        document.querySelector<HTMLInputElement>("#floating_time")?.value || "",
+      proposedBy:
+        document.querySelector<HTMLInputElement>("#floating_proposed_by")
+          ?.value || "",
+      eventType:
+        document.querySelector<HTMLInputElement>("#floating_event_type")
+          ?.value || "",
+      location:
+        document.querySelector<HTMLInputElement>("#floating_place")?.value ||
+        "",
+      description:
+        document.querySelector<HTMLTextAreaElement>("#description")?.value ||
+        "",
+      eventGoal:
+        document.querySelector<HTMLTextAreaElement>("#gaol + textarea")
+          ?.value || "",
+      expectedParticipants: parseInt(
+        document.querySelector<HTMLInputElement>(
+          '[name="floating_exp_participant_count"]'
+        )?.value || "0"
+      ),
+    };
+    const requiredFields = [
+      "title",
+      // "startDate",
+      // "startTime",
+      // "eventType",s
+      // "location",
+    ];
+    const missingFields = requiredFields.filter(
+      (field) => !eventData[field as keyof typeof eventData]
+    );
+
+    if (missingFields.length > 0) {
+      alert(`Please fill in required fields: ${missingFields.join(", ")}`);
+      return;
+    }
+
+    // Budget Information
+    const budgetData = {
+      expectedIncome: tableData1.filter((row) => row.description && row.price),
+      expectedExpenses: tableData2.filter(
+        (row) => row.description && row.price
+      ),
+    };
+
+    const formData = {
+      ...eventData,
+      ...budgetData,
+    };
+
+    console.log(formData);
+    try {
+      const response = await axios.post("/events", formData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (response.status === 201) {
+        alert("Event created successfully");
+      } else {
+        alert("Failed to create event");
+      }
+    } catch (error) {
+      console.error("Failed to create event", error);
+    }
+  };
+
   return (
     <>
       <hr></hr>
@@ -32,19 +110,22 @@ const CreateEvent = () => {
         <ul className="flex justify-end">
           <li className="mr-3">
             <a
-              className="inline-block border border-blue-500 rounded py-1 px-3 bg-blue-500 text-gray-700 align-right"
+              className="inline-block border border-blue-500 rounded py-1 px-3 bg-blue-500 text-gray-300 align-right"
               href="#"
+              onClick={handleSubmit}
             >
-              Approve
+              Create
             </a>
           </li>
           <li className="mr-3">
-            <a
-              className="inline-block border rounded py-1 px-3 bg-gray-300 text-black align-right"
-              href="#"
-            >
-              Back
-            </a>
+            <Link to="/events">
+              <a
+                className="inline-block border rounded py-1 px-3 bg-gray-300 text-black align-right"
+                href="#"
+              >
+                Back
+              </a>
+            </Link>
           </li>
         </ul>
       </div>
@@ -62,14 +143,14 @@ const CreateEvent = () => {
               <div className="relative z-0 w-2/3 px-1 mb-8 group">
                 <input
                   type="text"
-                  name="floating_first_name"
-                  id="floating_first_name"
-                  className="block py-2.5 px-0 w-96 text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-700 dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                  name="floating_first_title"
+                  id="floating_first_title"
+                  className="block py-2.5 px-0 w-96 text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-300 dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                   placeholder=" "
                   required
                 />
                 <label
-                  for="floating_first_name"
+                  htmlFor="floating_first_title"
                   className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
                 >
                   Event Title :
@@ -79,14 +160,14 @@ const CreateEvent = () => {
               <div className="relative z-0 w-2/3 px-1 mb-2 group">
                 <input
                   type="Date"
-                  name="floating_last_name"
-                  id="floating_last_name"
-                  className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-700 dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                  name="floating_date"
+                  id="floating_date"
+                  className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-300 dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                   placeholder=" "
                   required
                 />
                 <label
-                  for="floating_last_name"
+                  htmlFor="floating_date"
                   className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
                 >
                   Date
@@ -99,14 +180,14 @@ const CreateEvent = () => {
               <div className="relative z-0 w-2/3 px-1 mb-8 group">
                 <input
                   type="text"
-                  name="floating_first_name"
-                  id="floating_first_name"
-                  className="block py-2.5 px-0 w-96 text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-700 dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                  name="floating_proposed_by"
+                  id="floating_proposed_by"
+                  className="block py-2.5 px-0 w-96 text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-300 dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                   placeholder=" "
                   required
                 />
                 <label
-                  for="floating_first_name"
+                  htmlFor="floating_proposed_by"
                   className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
                 >
                   Proposed by :
@@ -118,12 +199,12 @@ const CreateEvent = () => {
                   type="Time"
                   name="floating_time"
                   id="floating_time"
-                  className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-700 dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                  className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-300 dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                   placeholder=" "
                   required
                 />
                 <label
-                  for="floating_last_name"
+                  htmlFor="floating_time"
                   className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
                 >
                   Time
@@ -135,14 +216,14 @@ const CreateEvent = () => {
             <div className="relative z-0 w-2/3 mb-6 group ">
               <input
                 type="text"
-                name="floating_password"
-                id="floating_password"
-                className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-700 dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                name="floating_event_type"
+                id="floating_event_type"
+                className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-300 dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                 placeholder=" "
                 required
               />
               <label
-                for="floating_password"
+                htmlFor="floating_event_type"
                 className=" peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
               >
                 Event Type :
@@ -153,14 +234,14 @@ const CreateEvent = () => {
             <div className="relative z-0 w-2/3 mb-6 group ">
               <input
                 type="text"
-                name="floating_password"
-                id="floating_password"
-                className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-700 dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                name="floating_place"
+                id="floating_place"
+                className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-300 dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                 placeholder=" "
                 required
               />
               <label
-                for="floating_password"
+                htmlFor="floating_place"
                 className=" peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
               >
                 Place :
@@ -170,15 +251,15 @@ const CreateEvent = () => {
           <div className="flex justify-evenly">
             <div className="w-2/3 justify-items-start">
               <label
-                for="message"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-700"
+                htmlFor="description"
+                className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
               >
                 Event Description :
               </label>
               <textarea
-                id="message"
-                rows="4"
-                className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-700 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                id="description"
+                rows={4}
+                className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-300 dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Leave a comment..."
               ></textarea>
             </div>
@@ -187,15 +268,15 @@ const CreateEvent = () => {
           <div className="flex justify-evenly">
             <div className="w-2/3 justify-items-star">
               <label
-                for="message"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-700"
+                htmlFor="goal"
+                className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
               >
                 Event Goal :
               </label>
               <textarea
-                id="message"
-                rows="4"
-                className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-700 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                id="goal"
+                rows={4}
+                className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-300 dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Leave a comment..."
               ></textarea>
             </div>
@@ -208,35 +289,17 @@ const CreateEvent = () => {
           </div>
           <br></br>
           <div className="flex justify-evenly">
-            <div className="relative z-0 w-2/3 mb-6 group ">
-              <input
-                type="text"
-                name="floating_password"
-                id="floating_password"
-                className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-700 dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                placeholder=" "
-                required
-              />
-              <label
-                for="floating_password"
-                className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              >
-                Expected Participants :
-              </label>
-            </div>
-          </div>
-          <div className="flex justify-evenly">
             <div className="relative z-0 w-2/3 mb-6 group">
               <input
                 type="text"
-                name="floating_password"
-                id="floating_password"
-                className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-700 dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                name="floating_exp_participant_count"
+                id="floating_exp_participant_count"
+                className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-300 dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                 placeholder=" "
                 required
               />
               <label
-                for="floating_password"
+                htmlFor="floating_exp_participant_count"
                 className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
               >
                 Expected Participants Count :
@@ -314,9 +377,9 @@ const CreateEvent = () => {
                 </tbody>
                 <tfoot>
                   <tr>
-                    <td colSpan="3">
+                    <td colSpan={3}>
                       <button
-                        className="text-gray-700 bg-blue-500 hover:bg-blue-700 text-sm py-2 px-4 rounded-md"
+                        className="text-gray-300 bg-blue-500 hover:bg-blue-700 text-sm py-2 px-4 rounded-md mt-4"
                         onClick={addRow1}
                       >
                         Add row
@@ -337,14 +400,14 @@ const CreateEvent = () => {
             <div className="relative z-0 w-2/3 mb-6 group">
               <input
                 type="text"
-                name="floating_email"
-                id="floating_email"
-                className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-700 dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                name="floating_exp_expence"
+                id="floating_exp_expence"
+                className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-300 dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                 placeholder=" "
                 required
               />
               <label
-                for="floating_email"
+                htmlFor="floating_exp_expence"
                 className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
               >
                 Expected Total Expenses
@@ -414,9 +477,9 @@ const CreateEvent = () => {
                 </tbody>
                 <tfoot>
                   <tr>
-                    <td colSpan="3">
+                    <td colSpan={3}>
                       <button
-                        className="text-gray-700 bg-blue-500 hover:bg-blue-700 text-sm py-2 px-4 rounded-md"
+                        className="text-gray-300 bg-blue-500 hover:bg-blue-700 text-sm py-2 px-4 rounded-md mt-4"
                         onClick={addRow2}
                       >
                         Add row
@@ -437,7 +500,7 @@ const CreateEvent = () => {
             <div className="relative z-0 w-2/3 mb-6 group">
               <div className="flex items-center justify-center w-full">
                 <label
-                  for="dropzone-file"
+                  htmlFor="dropzone-file"
                   className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
                 >
                   <div className="flex flex-col items-center justify-center pt-5 pb-6">
@@ -472,13 +535,13 @@ const CreateEvent = () => {
           <div className="flex justify-evenly">
             <div className="w-2/3 justify-items-start">
               <label
-                for="message"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-700"
+                htmlFor="caption"
+                className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
               ></label>
               <textarea
-                id="message"
-                rows="4"
-                className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-700 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                id="caption"
+                rows={4}
+                className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-300 dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Caption"
               ></textarea>
             </div>
@@ -490,4 +553,4 @@ const CreateEvent = () => {
   );
 };
 
-export default CreateEvent;
+export default CreateEvents;

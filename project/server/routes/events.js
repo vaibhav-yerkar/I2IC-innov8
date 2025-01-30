@@ -7,8 +7,13 @@ export const router = express.Router();
 router.get("/", async (req, res) => {
   try {
     const events = await Event.find()
-      .populate("createdBy", "username fullName avatarUrl")
-      .populate("group", "name");
+      .populate("proposedBy")
+      .select(
+        "title eventType location description startDate startTime attending"
+      );
+    if (!events) {
+      return res.status(404).json({ message: "No events found" });
+    }
     res.json(events);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -18,11 +23,17 @@ router.get("/", async (req, res) => {
 // Create a new event
 router.post("/", async (req, res) => {
   const event = new Event(req.body);
+  event = {
+    ...event,
+    attending: 0,
+  };
+  console.log(event);
   try {
     const newEvent = await event.save();
     res.status(201).json(newEvent);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    console.log(error);
+    res.status(402).json({ message: error.message });
   }
 });
 
