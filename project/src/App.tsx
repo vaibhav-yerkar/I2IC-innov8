@@ -16,21 +16,30 @@ function App() {
   return (
     <Router>
       <div className="min-h-screen bg-gray-50">
+        <Navigation />
         <main className="container mx-auto px-4 py-8">
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/groups" element={<Groups />} />
-            <Route path="/events" element={<Events />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/register/:eventId" element={<RegisterForm />} />
+
+            <Route
+              element={<ProtectedRoute allowedRoles={["user", "admin"]} />}
+            >
+              <Route path="/groups" element={<Groups />} />
+              <Route path="/events" element={<Events />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/register/:eventId" element={<RegisterForm />} />
+            </Route>
 
             {/* Restrict /create-events route to "admin" users only */}
-            <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
+            <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
               <Route path="/create-events" element={<CreateEvents />} />
             </Route>
 
             {/* Unauthorized page */}
-            <Route path="/unauthorized" element={<h1>Unauthorized Access</h1>} />
+            <Route
+              path="/unauthorized"
+              element={<h1>Unauthorized Access</h1>}
+            />
           </Routes>
         </main>
       </div>

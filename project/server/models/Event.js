@@ -12,6 +12,17 @@ const eventSchema = new mongoose.Schema({
   eventGoal: { type: String },
   attending: { type: Number, default: 0 },
 
+  registeredUsers: [
+    {
+      userId: String, // Clerk user ID
+      registrationId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "StudentRegistration",
+      },
+      registeredAt: { type: Date, default: Date.now },
+    },
+  ],
+
   // Additional Information
   expectedParticipants: { type: Number },
 
@@ -55,9 +66,6 @@ const eventSchema = new mongoose.Schema({
       registeredAt: { type: Date, default: Date.now },
     },
   ],
-
-  // Registered Users (For formal event registration)
-  registeredUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: "Registration" }],
 
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },

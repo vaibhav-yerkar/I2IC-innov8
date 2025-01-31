@@ -9,7 +9,7 @@ router.get("/", async (req, res) => {
     const events = await Event.find()
       .populate("proposedBy")
       .select(
-        "title eventType location description startDate startTime attending"
+        "title eventType location description startDate startTime attending registeredUsers"
       );
     if (!events) {
       return res.status(404).json({ message: "No events found" });
@@ -37,10 +37,9 @@ router.post("/", async (req, res) => {
 // Get event by ID
 router.get("/:id", async (req, res) => {
   try {
-    const event = await Event.findById(req.params.id)
-      .populate("createdBy", "username fullName avatarUrl")
-      .populate("group", "name")
-      .populate("participants.user", "username fullName avatarUrl");
+    const event = await Event.findById(req.params.id).select(
+      "title startDate startTime location description attending registeredUsers"
+    );
     if (!event) {
       return res.status(404).json({ message: "Event not found" });
     }
