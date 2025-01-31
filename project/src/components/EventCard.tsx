@@ -26,14 +26,14 @@ function EventCard({
   date,
   location,
   description,
-  attendees,
+  attending,
 }: {
   eventId: string;
   title: string;
   date: Date;
   location: string;
   description: string;
-  attendees: number;
+  attending: number;
 }) {
   const { user } = useUser(); // Get user data using Clerk's useUser hook
   const userId = user?.id;
@@ -41,6 +41,7 @@ function EventCard({
   const [showForm, setShowForm] = useState(false);
   const [isRegistered, setIsRegistered] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [count, setCount] = useState(0);
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -56,8 +57,11 @@ function EventCard({
         const response = await axios.get<Event>(`/events/${eventId}`);
         console.log(response.data);
         const isUserRegistered = response.data.registeredUsers?.some(
-          (reg: any) => reg.userId === user?.id
+          (reg: any) => {
+            reg.userId === user?.id;
+          }
         );
+        setCount(response.data.attending);
         setIsRegistered(isUserRegistered);
       } catch (error: any) {
         console.error("Error checking registration:", error.response.data);
@@ -75,11 +79,17 @@ function EventCard({
 
   const handleUnregister = async () => {
     try {
-      await axios.post(`/unregister`, {
+      const response = await axios.post(`/unregister`, {
         eventId,
         userId: user?.id,
       });
-      setIsRegistered(false);
+      if (response.status === 200) {
+        console.log("Unregistration successful");
+        setCount(count - 1); // Decrease count by one
+        setIsRegistered(false); // Update registration status
+      } else {
+        console.error("Unregistration failed");
+      }
     } catch (error: any) {
       console.error("Error unregistering:", error.response.data);
     }
@@ -99,6 +109,8 @@ function EventCard({
 
       if (response.status === 200) {
         console.log("Registration successful");
+        setCount(count + 1);
+        setIsRegistered(true);
         setShowForm(false);
       } else {
         console.error("Registration failed");
@@ -124,7 +136,7 @@ function EventCard({
         </div>
         <div className="flex items-center text-gray-600">
           <Clock className="h-5 w-5 mr-2" />
-          <span>{attendees} attending</span>
+          <span>{count} attending</span>
         </div>
       </div>
       <p className="mt-4 text-gray-600">{description}</p>

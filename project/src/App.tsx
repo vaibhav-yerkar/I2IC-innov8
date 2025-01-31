@@ -4,6 +4,8 @@ import { Navigation } from "./components/Navigation";
 import { Home } from "./pages/Home";
 import { Groups } from "./pages/Groups";
 import { Events } from "./pages/Events";
+import Analytics from "./pages/Analytics";
+
 import axios from "axios";
 import { Profile } from "./pages/Profile";
 import { CreateEvents } from "./pages/CreateEvents";
@@ -28,6 +30,10 @@ function App() {
               <Route path="/events" element={<Events />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/register/:eventId" element={<RegisterForm />} />
+              <Route
+                path="/events/:eventId/analytics"
+                element={<Analytics />}
+              />
             </Route>
 
             {/* Restrict /create-events route to "admin" users only */}
