@@ -1,20 +1,46 @@
 import React from 'react';
 import { ArrowRight, Users, Calendar, MessageSquare } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { SignedIn, SignedOut, SignInButton, UserButton, useUser } from '@clerk/clerk-react';
 
 export function Home() {
+  const { user } = useUser();  // Get user data using Clerk's useUser hook
+  const role = user?.publicMetadata?.role;  // Access user role from metadata
+
   return (
     <div className="space-y-8">
-      <header className="text-center">
+      <header className="text-center relative">
         <h1 className="text-4xl font-bold text-gray-900 mb-4">
-          Welcome to CampusConnect
+          Welcome to VishwaConnect
         </h1>
         <p className="text-xl text-gray-600 max-w-2xl mx-auto">
           Your hub for college collaboration, events, and community building
         </p>
+
+        {/* Sign-in button positioned in the top-right corner */}
+        <div className="absolute top-4 right-4">
+          <SignedOut>
+            <SignInButton />
+          </SignedOut>
+        </div>
+
+        {/* Display user button if the user is signed in */}
+        <div className="absolute top-4 right-4">
+        <SignedIn>
+          <div className="mt-4">
+            <UserButton />
+            {/* Show admin link if the user is an admin */}
+            {role === "admin" && (
+              <Link to="/admin" className="text-indigo-600 hover:text-indigo-700 mt-4 block">
+                Go to Admin Panel
+              </Link>
+            )}
+          </div>
+        </SignedIn>
+        </div>
       </header>
 
-      <div className="grid md:grid-cols-3 gap-8 mt-12">
+      <div className="grid md:grid-cols-2 gap-8 mt-12">
         <FeatureCard
           to="/groups"
           icon={<Users className="h-8 w-8 text-indigo-600" />}
@@ -26,12 +52,6 @@ export function Home() {
           icon={<Calendar className="h-8 w-8 text-indigo-600" />}
           title="Discover Events"
           description="Stay updated with college events, workshops, and meetups"
-        />
-        <FeatureCard
-          to="/groups"
-          icon={<MessageSquare className="h-8 w-8 text-indigo-600" />}
-          title="Engage & Connect"
-          description="Participate in discussions, share updates, and build your network"
         />
       </div>
 

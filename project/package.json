@@ -11,6 +11,8 @@
     "server": "node server/index.js"
   },
   "dependencies": {
+    "@clerk/clerk-react": "^5.22.8",
+    "@clerk/nextjs": "^6.10.4",
     "@supabase/supabase-js": "^2.39.7",
     "axios": "^1.7.9",
     "clsx": "^2.1.0",

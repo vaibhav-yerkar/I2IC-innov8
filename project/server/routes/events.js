@@ -22,11 +22,8 @@ router.get("/", async (req, res) => {
 
 // Create a new event
 router.post("/", async (req, res) => {
-  const event = new Event(req.body);
-  event = {
-    ...event,
-    attending: 0,
-  };
+  let event = new Event(req.body);
+  event.attending = 0;
   console.log(event);
   try {
     const newEvent = await event.save();
@@ -80,3 +77,4 @@ router.post("/:id/rsvp", async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 });
+export default router;

@@ -1,5 +1,6 @@
 import express from 'express';
 import { Group } from '../models/Group.js';
+import exp from 'constants';
 
 export const router = express.Router();
 
@@ -66,3 +67,5 @@ router.post('/:id/join', async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 });
+
+export default router;

@@ -86,7 +86,7 @@ const CreateEvents = () => {
 
     console.log(formData);
     try {
-      const response = await axios.post("/events", formData, {
+      const response = await axios.post("http://localhost:8000/api/events", formData, {
         headers: {
           "Content-Type": "application/json",
         },

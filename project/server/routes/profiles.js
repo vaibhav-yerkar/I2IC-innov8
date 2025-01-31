@@ -1,5 +1,6 @@
 import express from 'express';
 import { Profile } from '../models/Profile.js';
+import e from 'express';
 
 export const router = express.Router();
 
@@ -54,3 +55,5 @@ router.patch('/:id', async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 });
+
+export default router;
